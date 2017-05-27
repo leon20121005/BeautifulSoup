@@ -9,8 +9,8 @@ def get_link_list():
     list_req = requests.get(HOME_URL)
     if list_req.status_code == requests.codes.ok:
         soup = BeautifulSoup(list_req.content, HTML_PARSER)
-        links = soup.find_all('a', href = True, text = re.compile('【'))
 
+        links = soup.find_all('a', href = True, text = re.compile('【'))
         for link in links:
             print(link.text)
             print(link['href'])
@@ -20,11 +20,20 @@ def get_information(link):
     req = requests.get(link)
     if req.status_code == requests.codes.ok:
         soup = BeautifulSoup(req.content, HTML_PARSER)
+
         addresses = soup.find_all(text = re.compile('地址:'))
+        if len(addresses) == 0:
+            print('Address None')
+            return
 
         print(len(addresses))
         for address in addresses:
-            print(str(address) + '\n')
+            print(address)
+
+        article = soup.find('div', id = 'article-content-inner')
+        sentences = article.find_all('p')
+        for sentence in sentences:
+            print(sentence.text)
 
 if __name__ == '__main__':
     get_link_list()
